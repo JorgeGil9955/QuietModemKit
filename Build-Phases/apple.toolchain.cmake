@@ -68,7 +68,7 @@ set (CMAKE_OSX_DEPLOYMENT_TARGET "" CACHE STRING "Force unset of the deployment 
 # Determine the cmake host system version so we know where to find the Apple *OS SDKs
 find_program (CMAKE_UNAME uname /bin /usr/bin /usr/local/bin)
 if (CMAKE_UNAME)
-    exec_program(uname ARGS -r OUTPUT_VARIABLE CMAKE_HOST_SYSTEM_VERSION)
+    execute_process(COMMAND uname -r OUTPUT_VARIABLE CMAKE_HOST_SYSTEM_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
     string (REGEX REPLACE "^([0-9]+)\\.([0-9]+).*$" "\\1" DARWIN_MAJOR_VERSION "${CMAKE_HOST_SYSTEM_VERSION}")
 endif (CMAKE_UNAME)
 
@@ -126,7 +126,7 @@ string (REPLACE " " ";" APPLE_ARCH "$ENV{ARCHS_STANDARD}")
 set (CMAKE_OSX_ARCHITECTURES "${APPLE_ARCH}" CACHE STRING  "Build architecture for Apple *OS")
 
 set(APPLE_PLATFORM_VERSION_MIN $ENV{$ENV{DEPLOYMENT_TARGET_CLANG_ENV_NAME}})
-set(APPLE_VERSION_FLAG "-$ENV{DEPLOYMENT_TARGET_CLANG_FLAG_NAME}=${APPLE_PLATFORM_VERSION_MIN}")
+#set(APPLE_VERSION_FLAG "-$ENV{DEPLOYMENT_TARGET_CLANG_FLAG_NAME}=${APPLE_PLATFORM_VERSION_MIN}")
 set (PLATFORM_VERSION ${APPLE_PLATFORM_VERSION_MIN} CACHE STRING "Minimum version of the target platform")
 
 # Define XCode ENABLE_BITCODE option
@@ -192,8 +192,8 @@ set (CMAKE_CXX_COMPILER_WORKS TRUE)
 set (CMAKE_C_COMPILER_WORKS TRUE)
 
 # Hidden visibilty is required for cxx on Apple *OS
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${APPLE_VERSION_FLAG} ${BITCODE_FLAG} -isysroot ${CMAKE_OSX_SYSROOT}" CACHE STRING "")
-set (CMAKE_CXX_FLAGS "${APPLE_VERSION_FLAG} ${BITCODE_FLAG} -fvisibility=hidden -fvisibility-inlines-hidden -std=gnu++11 -isysroot ${CMAKE_OSX_SYSROOT}" CACHE STRING "")
+set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${BITCODE_FLAG} -isysroot ${CMAKE_OSX_SYSROOT}" CACHE STRING "")
+set (CMAKE_CXX_FLAGS "${BITCODE_FLAG} -fvisibility=hidden -fvisibility-inlines-hidden -std=gnu++11 -isysroot ${CMAKE_OSX_SYSROOT}" CACHE STRING "")
 
 set (CMAKE_C_LINK_FLAGS "-Wl,-search_paths_first ${CMAKE_C_LINK_FLAGS}")
 set (CMAKE_CXX_LINK_FLAGS "-Wl,-search_paths_first ${CMAKE_CXX_LINK_FLAGS}")
